@@ -19,7 +19,7 @@ app.get('/', async (req,res) => {
       const query = db.collection("Locs").doc(lugar)
       const doc = await query.get()
       const lugarInfo = doc.data()
-      return res.status(200).json(lugarInfo)
+      return res.status(200).json(JSON.stringify(lugarInfo))
     } else {
       const querySnapshot = db.collection("Locs").orderBy('count', 'desc').limit(5)
       const allDoc = await querySnapshot.get()
@@ -28,7 +28,7 @@ app.get('/', async (req,res) => {
         count: doc.data().count
       }))
       console.log(lugarInfoArr)
-      return res.status(200).json(lugarInfoArr)
+      return res.status(200).json(JSON.stringify(lugarInfoArr))
     }
   } catch (error) {
     return res.status(500).send(error)
