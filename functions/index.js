@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin")
 const serviceAccount = require("./config-species-firebase.json")
+//const cors = require('cors')
 const express = require('express')
 
 const app = express()
@@ -27,7 +28,7 @@ app.get('/', async (req,res) => {
         count: doc.data().count
       }))
       console.log(lugarInfoArr)
-      return res.status(200).json({message: 'Specify a lugar param. For example: '+ JSON.stringify(lugarInfoArr)})
+      return res.status(200).json(JSON.stringify(lugarInfoArr))
     }
   } catch (error) {
     return res.status(500).send(error)
