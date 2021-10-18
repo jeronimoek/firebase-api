@@ -28,7 +28,7 @@ app.get('/', async (req,res) => {
         count: doc.data().count
       }))
       console.log(lugarInfoArr)
-      return res.status(200).json(JSON.stringify(lugarInfoArr))
+      return res.status(200).json(lugarInfoArr)
     }
   } catch (error) {
     return res.status(500).send(error)
