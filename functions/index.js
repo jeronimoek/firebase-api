@@ -3,6 +3,7 @@ const admin = require("firebase-admin")
 const serviceAccount = require("./config-species-firebase.json")
 const cors = require('cors')
 const express = require('express')
+require("firebase-functions/lib/logger/compat");
 
 const app = express()
 
@@ -47,7 +48,7 @@ app.post('/', cors(corsOptions), async (req,res) => {
   //try {
   const species = req.body.species
   if(species){
-    const allSpData = []
+    //const allSpData = []
     const refs = species.map(id => db.collection("Species").doc(`${id}`))
     const users = await db.getAll(...refs)
     const dataResp = users.map(doc => doc.data())
@@ -67,6 +68,39 @@ app.post('/', cors(corsOptions), async (req,res) => {
     return res.status(500).send(error)
   }
   */
+})
+
+app.post('/random', cors(corsOptions), async (req,res) => {
+  //try {
+  const strings = req.body.strings
+  try{
+    if(strings && strings.length){
+      console.log("strings: ", strings)
+      const data = []
+      for(const string of strings){
+        const querySnapshot = db.collection("Species")
+          .where("scientific_name", ">=" ,string)
+          .orderBy("scientific_name")
+          .limit(1)
+        const allDoc = await querySnapshot.get()
+        const lugarInfoArr = allDoc.docs.map(doc => doc)
+        console.log()
+        data.push(lugarInfoArr[0])
+      }
+      //return res.status(200).json(JSON.stringify( await db.get(refs[0]))) NO FUNCIONA
+      console.log("data: ",data)
+      //const speciesData = await db.getAll(...refs)
+      //console.log("speciesData: ",speciesData)
+      const dataResp = data.map(doc => doc.data())
+      console.log("dataResp: ",dataResp)
+      console.log("dataResp STRING: ",JSON.stringify(dataResp))
+      return res.status(200).json(JSON.stringify(dataResp))
+    }
+    return res.status(200).json(JSON.stringify("STRINGS VACIO"))
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send(error)
+  }
 })
 
 exports.app = functions.https.onRequest(app)
